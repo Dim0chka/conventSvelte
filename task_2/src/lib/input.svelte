@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Loading from "./loading.svelte"
     export let value: number;
     export let changeHandler: (ev: Event) => void;
     export let title: string;
@@ -8,7 +9,14 @@
 
 <div class="calc_box">
     <input type="text" on:input={changeHandler} bind:value {name} class="input">
-    <span class="calc_period">{title}</span>
+
+    {#if title === undefined}
+        <span class="calc_period">
+            Загрузка...
+        </span>
+    {:else}
+        <span class="calc_period">{title}</span>
+    {/if}
 </div>
 
 <style>
@@ -38,6 +46,22 @@
     line-height: 35px;
     text-align: right;
 }
-
+  
+  .loading-component__icon {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgb(9, 6, 6);
+    border-radius: 100%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
 
 </style>

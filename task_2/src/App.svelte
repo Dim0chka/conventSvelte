@@ -1,10 +1,10 @@
 <script lang="ts">
   // import svelteLogo from './assets/svelte.svg'
   // import viteLogo from '/vite.svg'
-  import Input from './lib/Input.svelte'
+  import Input from './lib/input.svelte'
   import { afterUpdate, onMount } from 'svelte'
   import fetchValues from "./fetchers/fetchValues"
-  import Select from "./lib/select.svelte"
+  import Menu from "./lib/menu.svelte"
   import current from './current';
 
   let isLoading = false;
@@ -26,7 +26,6 @@
 
 
   onMount(async () => {
-    Promise.all([fetchValues("RUB"), fetchValues("USD")]);
     exchangeRateFrom = await getExchangeRate(exchange.fromCur, exchange.toCur);
     exchangeRateTo = await getExchangeRate(exchange.toCur, exchange.fromCur);
   });
@@ -49,19 +48,17 @@
       }
       if (name == "fromAmount") {
         let from = await fetchValues(exchange.fromCur)
-        exchange.toAmount = exchange.fromAmount * from[exchange.toCur]
-        console.log(exchange.toAmount)
+        exchange.toAmount = (exchange.fromAmount * from[exchange.toCur])
       }
       if (name == "toAmount") {
         let to = await fetchValues(exchange.toCur)
-        exchange.fromAmount = exchange.toAmount * to[exchange.fromCur]
+        exchange.fromAmount = (exchange.toAmount * to[exchange.fromCur])
       }
     }
     if (ev.target instanceof HTMLSelectElement) {
       isLoading = true;
       let { name, value } = ev.target;
       exchange[name] = value;
-      const x = await fetchValues(value);
       isLoading = false;
 
       if (name === "fromCur" || name === "toCur") {
@@ -70,6 +67,28 @@
       }
     }
   }
+
+  async function handleChangeButton(name: string, value: string) {
+    isLoading = true;
+    exchange[name] = value;
+    isLoading = false;
+
+    if (name === "fromCur" || name === "toCur") {
+        let from = await fetchValues(exchange.fromCur);
+        exchange.toAmount = exchange.fromAmount * from[exchange.toCur];
+    }
+  }
+
+  function changeData() {
+      let changeCur = exchange.fromCur
+      exchange.fromCur = exchange.toCur
+      exchange.toCur = changeCur
+
+      let changeAmount = exchange.fromAmount
+      exchange.fromAmount = exchange.toAmount
+      exchange.toAmount = changeAmount
+  }
+
 </script>
 <div class="page">
   <div class="demo" style="font-family: 'Yandex Sans Text'; font-weight: 100; font-style: normal;">
@@ -77,38 +96,39 @@
       <div class="box_convent">
         <div class="calc_side">
           <h2 class="calc_title">У меня есть</h2>
-          <Select
+          <Menu
+            options={current}
             value={exchange.fromCur}
-            title=""
+            changeHandlerButton={handleChangeButton}
             changeHandler={handleChange}
             name="fromCur"
-            options={current.filter((x) => x.id != exchange.toCur)}
           />
+
           <Input
             title={exchangeRateFrom}
             changeHandler={handleChange}
-            value={exchange.fromAmount}
+            value={exchange.fromAmount === 0 ? '' : exchange.fromAmount}
             name="fromAmount"
           />
         </div>
 
         <div class="calc_center">
-          <div class="calc_reverse"></div>
+          <div on:click={changeData} class="calc_reverse"></div>
         </div>
 
         <div class="calc_side">
           <h2 class="calc_title">Хочу приобрести</h2>
-          <Select
+          <Menu
+            options={current}
             value={exchange.toCur}
-            title=""
+            changeHandlerButton={handleChangeButton}
             changeHandler={handleChange}
             name="toCur"
-            options={current.filter((x) => x.id != exchange.fromCur)}
           />
           <Input
             title={exchangeRateTo}
             changeHandler={handleChange}
-            value={exchange.toAmount}
+            value={exchange.toAmount === 0 ? '' : exchange.toAmount}
             name="toAmount"
           />
         </div>

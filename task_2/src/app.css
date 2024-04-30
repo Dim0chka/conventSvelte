@@ -61,6 +61,8 @@ table {
 }
 /* common styles */
 body {
+    display: flex;
+    justify-content: center;
     background: #f1f1f1;
     color: #000;
 }
@@ -70,6 +72,7 @@ body {
     margin: 0 auto;
     padding: 20px 20px 0 20px;
     overflow: hidden;
+    border-radius: 0 0 4px 4px;
 }
 .font-container {
     overflow-x: auto;
@@ -81,7 +84,7 @@ body {
 }
 h1 {
     position: relative;
-    background: #444;
+    background: #FC401E;
     font-size: 32px;
     color: #fff;
     padding: 10px 20px;
