@@ -6,23 +6,33 @@
     export let value: string;
     export let name: string;
 
-    let optionsButtons: any[] = []
+    let sortedCurrencies: any[] = []
     
 
     onMount(() => {
-        optionsButtons = options.filter((x) => ['USD', 'EUR','RUB', 'RSD'].includes(x.id))
+        sortedCurrencies = [
+            ...options.filter((x) => ['USD', 'EUR','RUB'].includes(x.id)).reverse(),
+            ...options.filter((x) => x.id === 'GBP')
+        ]
+
+        console.log(sortedCurrencies)
     })
 
     afterUpdate(() => {
         if (!['USD', 'EUR','RUB'].includes(value)) {
-            optionsButtons = options.filter((x) => ['USD', 'EUR','RUB', value].includes(x.id))
+            sortedCurrencies = [
+                ...options.filter((x) => ['USD', 'EUR','RUB'].includes(x.id)).reverse(),
+                ...options.filter((x) => x.id === value)
+            ]
         }
+        console.log(sortedCurrencies)
+
     })
 
 </script>
 
 <div class="calc__switcher">
-    {#each optionsButtons as option}
+    {#each sortedCurrencies as option}
     <button
         class="calc-btn"
         aria-current={value === option.id}

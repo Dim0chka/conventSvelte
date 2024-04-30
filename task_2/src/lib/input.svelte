@@ -1,5 +1,4 @@
 <script lang="ts">
-    import Loading from "./loading.svelte"
     export let value: number;
     export let changeHandler: (ev: Event) => void;
     export let title: string;
