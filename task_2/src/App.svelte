@@ -30,12 +30,6 @@
     exchangeRateTo = await getExchangeRate(exchange.toCur, exchange.fromCur);
   });
 
-  afterUpdate(async () => {
-    exchangeRateFrom = await getExchangeRate(exchange.fromCur, exchange.toCur);
-    exchangeRateTo = await getExchangeRate(exchange.toCur, exchange.fromCur);
-
-    handleChange
-  })
 
   async function handleChange(ev: InputEvent) {
     if (ev.target instanceof HTMLInputElement) {
@@ -61,9 +55,22 @@
       exchange[name] = value;
       isLoading = false;
 
-      if (name === "fromCur" || name === "toCur") {
-            let from = await fetchValues(exchange.fromCur);
-            exchange.toAmount = exchange.fromAmount * from[exchange.toCur];
+      if (name === "fromCur") {
+        let from = await fetchValues(exchange.fromCur)
+        let to = await fetchValues(exchange.toCur)
+        exchange.toAmount = exchange.fromAmount * from[exchange.toCur]
+
+        exchangeRateFrom = `1 ${exchange.fromCur} = ${from[exchange.toCur]} ${exchange.toCur}` 
+        exchangeRateTo = `1 ${exchange.toCur} = ${to[exchange.fromCur]} ${exchange.fromCur}` 
+      }
+
+      if (name === "toCur") {
+        let from = await fetchValues(exchange.fromCur)
+        let to = await fetchValues(exchange.toCur)
+        exchange.toAmount = exchange.fromAmount * from[exchange.toCur]
+
+        exchangeRateFrom = `1 ${exchange.fromCur} = ${from[exchange.toCur]} ${exchange.toCur}` 
+        exchangeRateTo = `1 ${exchange.toCur} = ${to[exchange.fromCur]} ${exchange.fromCur}` 
       }
     }
   }
@@ -73,10 +80,23 @@
     exchange[name] = value;
     isLoading = false;
 
-    if (name === "fromCur" || name === "toCur") {
-        let from = await fetchValues(exchange.fromCur);
-        exchange.toAmount = exchange.fromAmount * from[exchange.toCur];
-    }
+    if (name === "fromCur") {
+        let from = await fetchValues(exchange.fromCur)
+        let to = await fetchValues(exchange.toCur)
+        exchange.toAmount = exchange.fromAmount * from[exchange.toCur]
+
+        exchangeRateFrom = `1 ${exchange.fromCur} = ${from[exchange.toCur]} ${exchange.toCur}` 
+        exchangeRateTo = `1 ${exchange.toCur} = ${to[exchange.fromCur]} ${exchange.fromCur}` 
+      }
+
+      if (name === "toCur") {
+        let from = await fetchValues(exchange.fromCur)
+        let to = await fetchValues(exchange.toCur)
+        exchange.toAmount = exchange.fromAmount * from[exchange.toCur]
+
+        exchangeRateFrom = `1 ${exchange.fromCur} = ${from[exchange.toCur]} ${exchange.toCur}` 
+        exchangeRateTo = `1 ${exchange.toCur} = ${to[exchange.fromCur]} ${exchange.fromCur}` 
+      }
   }
 
   function changeData() {
