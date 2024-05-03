@@ -99,7 +99,7 @@
       }
   }
 
-  function changeData() {
+  async function changeData() {
       let changeCur = exchange.fromCur
       exchange.fromCur = exchange.toCur
       exchange.toCur = changeCur
@@ -107,6 +107,9 @@
       let changeAmount = exchange.fromAmount
       exchange.fromAmount = exchange.toAmount
       exchange.toAmount = changeAmount
+
+      exchangeRateFrom = await getExchangeRate(exchange.fromCur, exchange.toCur);
+      exchangeRateTo = await getExchangeRate(exchange.toCur, exchange.fromCur);
   }
 
 </script>
@@ -179,7 +182,7 @@
 
 .calc_center {
   width: 110px;
-  padding-top: 20px;
+  padding-top: 70px;
   display: inline-block;
   vertical-align: top;
 }

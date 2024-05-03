@@ -7,7 +7,8 @@
     export let name: string;
 
     let sortedCurrencies: any[] = []
-    
+
+    let tooltip: any
 
     onMount(() => {
         sortedCurrencies = [
@@ -15,7 +16,6 @@
             ...options.filter((x) => x.id === 'GBP')
         ]
 
-        console.log(sortedCurrencies)
     })
 
     afterUpdate(() => {
@@ -25,9 +25,24 @@
                 ...options.filter((x) => x.id === value)
             ]
         }
-        console.log(sortedCurrencies)
-
     })
+
+    let nameOption: string
+
+    function openModal(event, name) {
+        tooltip.style.opacity = 1
+        nameOption = name
+        let target = event.target;
+        let coords = target.getBoundingClientRect()
+        tooltip.style.top = `${coords.top - tooltip.offsetHeight - 5}px`
+        tooltip.style.left = `${coords.left + (target.offsetWidth - tooltip.offsetWidth) / 2}px`
+    }
+
+    function closeModal() {
+        tooltip.style.opacity = 0
+    }
+
+
 
 </script>
 
@@ -37,13 +52,23 @@
         class="calc-btn"
         aria-current={value === option.id}
         aria-label={option.id}
+        data-tooltip={option.name}
+        
         on:click={() => {
             changeHandlerButton(name, option.id)
         }}
+        on:mouseenter={openModal(event, option.name)}
+        on:mouseleave={closeModal}
     >
     {option.id}
     </button>
     {/each}
+
+
+    <div class="tooltip" bind:this={tooltip}>
+        {nameOption}
+    </div>
+
     <select class="calc-btn" {name} bind:value on:change={changeHandler}>
         {#each options as option}
         <option value={option.id}>{option.id} - {option.name}</option>
@@ -87,7 +112,20 @@
 
 .calc-btn[aria-current="true"] {
     color: #fff;
-    background-color: #FC401E;
+    background: linear-gradient(0deg, rgba(2, 0, 36, 1) -1%, rgba(32, 252, 30, 1) 0%, rgba(0, 255, 173, 1) 100%);
 }
+
+.tooltip {
+    opacity: 0;
+    position: absolute;
+    border-radius: 4px;
+    text-align: center;
+
+    background: #fff;
+    transition: opacity 0.2s ease-in-out;
+    padding: 10px 20px;
+    box-shadow: 0 8px 40px 0 rgba(0, 0, 0, .2);
+}
+
 
 </style>
